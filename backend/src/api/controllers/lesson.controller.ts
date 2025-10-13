@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
 import Lesson from '../../models/Lesson.model';
 import Course from '../../models/Course.model';
-import { MinioClient } from '../../utils/minio-client'; // We will create this in backend/src/utils
-import amqp from 'amqplib';
+import { MinioClient } from '../../utils/minio-client';
 import { v4 as uuidv4 } from 'uuid';
 
-const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://rabbitmq';
 const UPLOAD_BUCKET = 'uploads';
 
 // Add a new lesson to a course (handles video upload)
@@ -44,22 +42,7 @@ export const addLessonToCourse = async (req: Request, res: Response) => {
       });
       videoUrl = filePath; // Store the path in MinIO
 
-      // Publish message to RabbitMQ for video processing
-      const connection = await amqp.connect(RABBITMQ_URL);
-      const channel = await connection.createChannel();
-      const queue = 'video-processing-queue';
-      await channel.assertQueue(queue, { durable: true });
-
-      const message = JSON.stringify({
-        lessonId: 'placeholder', // Will update after lesson is saved
-        courseId: course._id,
-        originalFilePath: filePath,
-        instructorId: instructorId,
-      });
-      channel.sendToQueue(queue, Buffer.from(message), { persistent: true });
-      console.log(" [x] Sent '%s'", message);
-      await channel.close();
-      await connection.close();
+      console.log(`Video uploaded successfully: ${filePath}`);
     }
 
     const newLesson = new Lesson({
@@ -74,11 +57,8 @@ export const addLessonToCourse = async (req: Request, res: Response) => {
 
     const lesson = await newLesson.save();
 
-    // Update the message in RabbitMQ with the actual lessonId
     if (contentType === 'video') {
-      // Re-publish with correct lessonId or update existing message if possible (more complex)
-      // For simplicity, we'll just log that the lessonId is now available.
-      console.log(`Lesson ${lesson._id} created. Video processing message sent.`);
+      console.log(`Lesson ${lesson._id} created with video: ${videoUrl}`);
     }
 
     res.status(201).json(lesson);
