@@ -43,12 +43,18 @@ import authRouter from './api/routes/auth.route';
 import userRouter from './api/routes/user.route';
 import courseRouter from './api/routes/course.route';
 import lessonRouter from './api/routes/lesson.route';
+import enrollmentRouter from './api/routes/enrollment.route';
+import ratingRouter from './api/routes/rating.route';
+import uploadRouter from './api/routes/upload.route';
 
 // API Routes
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/courses', courseRouter);
 app.use('/api/lessons', lessonRouter);
+app.use('/api/enrollments', enrollmentRouter);
+app.use('/api/ratings', ratingRouter);
+app.use('/api/upload', uploadRouter);
 
 // Sentry error handler must be before any other error middleware and after all controllers
 // app.use(SentryErrorMiddleware);
