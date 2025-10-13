@@ -10,13 +10,18 @@ import Courses from './pages/Courses.tsx';
 import CourseForm from './components/CourseForm.tsx';
 import Lessons from './pages/Lessons.tsx';
 import LessonForm from './components/LessonForm.tsx';
+import Home from './pages/Home.tsx';
 import keycloak from './keycloak';
 import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { DeviceProvider } from './contexts/DeviceContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 const queryClient = new QueryClient();
 
-const getDashboardComponent = (keycloak: any) => {
+const DashboardRouter = () => {
+  const { keycloak } = useKeycloak();
+  
   if (keycloak.hasRealmRole('admin')) {
     return <AdminDashboard />;
   } else if (keycloak.hasRealmRole('teacher')) {
@@ -24,7 +29,7 @@ const getDashboardComponent = (keycloak: any) => {
   } else if (keycloak.hasRealmRole('student')) {
     return <StudentDashboard />;
   } else {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 };
 
@@ -32,12 +37,23 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { keycloak, initialized } = useKeycloak();
 
   if (!initialized) {
-    return <div>Loading Keycloak...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
   if (!keycloak.authenticated) {
     keycloak.login();
-    return <div>Redirecting to login...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">جاري تسجيل الدخول...</p>
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;
@@ -50,13 +66,13 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Navigate to="/dashboard" replace />,
+        element: <Home />,
       },
       {
         path: "dashboard",
         element: (
           <ProtectedRoute>
-            {getDashboardComponent(keycloak)}
+            <DashboardRouter />
           </ProtectedRoute>
         ),
       },
@@ -144,7 +160,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <ReactKeycloakProvider authClient={keycloak}>
-        <RouterProvider router={router} />
+        <DeviceProvider>
+          <AuthProvider>
+            <RouterProvider router={router} />
+          </AuthProvider>
+        </DeviceProvider>
       </ReactKeycloakProvider>
     </QueryClientProvider>
   </React.StrictMode>,

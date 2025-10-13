@@ -19,5 +19,5 @@ RUN ls -l dist
 # For simplicity, we'll use serve for now
 RUN npm install -g serve
 
-EXPOSE 5173
-CMD [ "serve", "-s", "dist", "-l", "5173" ]
+EXPOSE 3000
+CMD [ "serve", "-s", "dist", "-l", "3000" ]
