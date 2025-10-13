@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import { useAuth } from './contexts/AuthContext';
+import { useAuth } from './contexts/Auth0Context';
 
 const App: React.FC = () => {
   const { isAuthenticated } = useAuth();
