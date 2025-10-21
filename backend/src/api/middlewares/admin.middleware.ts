@@ -1,20 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
+import { hasRole } from '../../config/auth0-config';
 
 /**
  * This middleware checks if the authenticated user has the 'admin' role.
- * It should be used after keycloak.protect().
+ * It should be used after Auth0 JWT authentication.
  */
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-  const kauth = (req as any).kauth;
+  const auth = (req as any).auth;
 
-  if (!kauth || !kauth.grant) {
+  if (!auth) {
     return res.status(401).json({ message: 'Authentication required.' });
   }
 
-  const token = kauth.grant.access_token;
-  const hasAdminRole = token.hasRealmRole('admin');
-
-  if (hasAdminRole) {
+  if (hasRole(req, 'admin')) {
     return next();
   } else {
     return res.status(403).json({ message: 'Forbidden: Administrator access required.' });

@@ -1,7 +1,6 @@
 import axios from 'axios';
-import keycloak from '../keycloak';
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -10,18 +9,27 @@ const apiClient = axios.create({
 
 // Add device information to requests
 let deviceId: string | null = null;
-// Device info will be set by DeviceContext
-// let deviceInfo: any = null;
+let getAccessToken: (() => Promise<string | undefined>) | null = null;
 
 export const setDeviceInfo = (id: string, _info: any) => {
   deviceId = id;
-  // deviceInfo = info;
+};
+
+export const setAuthTokenGetter = (tokenGetter: () => Promise<string | undefined>) => {
+  getAccessToken = tokenGetter;
 };
 
 apiClient.interceptors.request.use(async (config) => {
-  if (keycloak.authenticated) {
-    await keycloak.updateToken(30); // Refresh token if expired within 30 seconds
-    config.headers.Authorization = `Bearer ${keycloak.token}`;
+  // Add Auth0 token to requests
+  if (getAccessToken) {
+    try {
+      const token = await getAccessToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.error('Error getting access token:', error);
+    }
   }
   
   // Add device information to requests
@@ -41,8 +49,7 @@ apiClient.interceptors.response.use(
       if (errorCode === 'DEVICE_LIMIT_EXCEEDED' || errorCode === 'ACCOUNT_DISABLED') {
         // Handle device limit exceeded or account disabled
         localStorage.clear();
-        keycloak.logout();
-        window.location.href = '/login?error=' + errorCode;
+        window.location.href = '/?error=' + errorCode;
       }
     }
     return Promise.reject(error);
@@ -51,8 +58,8 @@ apiClient.interceptors.response.use(
 
 // API functions
 export const authAPI = {
-  login: (deviceIdentifier: string, deviceInfo: any) =>
-    apiClient.post('/auth/login', { deviceIdentifier, deviceInfo }),
+  login: (deviceIdentifier: string, deviceInfo: any, auth0UserData?: any) =>
+    apiClient.post('/auth/login', { deviceIdentifier, deviceInfo, auth0UserData }),
   
   logout: () =>
     apiClient.post('/auth/logout'),

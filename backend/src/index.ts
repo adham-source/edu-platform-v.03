@@ -23,10 +23,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Keycloak Middleware
-import keycloak, { sessionMiddleware } from './config/keycloak-config';
-app.use(sessionMiddleware);
-app.use(keycloak.middleware());
+// Auth0 JWT Middleware - will be applied to protected routes individually
 
 // Health check route
 app.get('/api/health', (req: Request, res: Response) => {

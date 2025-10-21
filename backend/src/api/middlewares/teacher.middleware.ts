@@ -1,19 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
+import { hasRole } from '../../config/auth0-config';
 
 /**
  * This middleware checks if the authenticated user has the 'teacher' role.
- * It should be used after keycloak.protect().
+ * It should be used after Auth0 JWT authentication.
  */
 export const isTeacher = (req: Request, res: Response, next: NextFunction) => {
-  const kauth = (req as any).kauth;
+  const auth = (req as any).auth;
 
-  if (!kauth || !kauth.grant) {
+  if (!auth) {
     return res.status(401).json({ message: 'Authentication required.' });
   }
 
-  const token = kauth.grant.access_token;
   // A user can be both a teacher and an admin, so we check for either.
-  const hasTeacherRole = token.hasRealmRole('teacher') || token.hasRealmRole('admin');
+  const hasTeacherRole = hasRole(req, 'teacher') || hasRole(req, 'admin');
 
   if (hasTeacherRole) {
     return next();

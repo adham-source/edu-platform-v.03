@@ -3,10 +3,14 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IUser extends Document {
   username: string;
   email: string;
-  authProviderId: string; // ID from Keycloak
+  auth0Id: string; // ID from Auth0
+  name?: string;
+  picture?: string;
   roles: string[];
   isDisabled: boolean;
+  lastLoginAt?: Date;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const UserSchema: Schema = new Schema({
@@ -23,10 +27,17 @@ const UserSchema: Schema = new Schema({
     trim: true,
     lowercase: true,
   },
-  authProviderId: {
+  auth0Id: {
     type: String,
     required: true,
     unique: true,
+  },
+  name: {
+    type: String,
+    trim: true,
+  },
+  picture: {
+    type: String,
   },
   roles: {
     type: [String],
@@ -37,7 +48,14 @@ const UserSchema: Schema = new Schema({
     type: Boolean,
     default: false,
   },
+  lastLoginAt: {
+    type: Date,
+  },
   createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
     type: Date,
     default: Date.now,
   },

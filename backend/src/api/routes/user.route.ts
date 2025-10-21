@@ -5,13 +5,13 @@ import {
   updateUser,
   deleteUser,
 } from '../controllers/user.controller';
-import keycloak from '../../config/keycloak-config';
+import { checkJwt } from "../../config/auth0-config";
 import { isAdmin } from '../middlewares/admin.middleware';
 
 const router = Router();
 
 // All routes in this file are protected and require admin privileges
-router.use(keycloak.protect());
+router.use(checkJwt);
 router.use(isAdmin);
 
 // Define the routes

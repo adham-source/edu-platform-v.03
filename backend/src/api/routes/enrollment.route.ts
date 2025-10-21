@@ -6,17 +6,17 @@ import {
   unenrollFromCourse,
   getCourseEnrollments
 } from '../controllers/enrollment.controller';
-import keycloak from '../../config/keycloak-config';
+import { checkJwt } from "../../config/auth0-config";
 
 const router = Router();
 
 // Student routes
-router.post('/courses/:courseId', keycloak.protect(), enrollInCourse);
-router.get('/my-enrollments', keycloak.protect(), getUserEnrollments);
-router.put('/courses/:courseId/progress', keycloak.protect(), updateProgress);
-router.delete('/courses/:courseId', keycloak.protect(), unenrollFromCourse);
+router.post('/courses/:courseId', checkJwt, enrollInCourse);
+router.get('/my-enrollments', checkJwt, getUserEnrollments);
+router.put('/courses/:courseId/progress', checkJwt, updateProgress);
+router.delete('/courses/:courseId', checkJwt, unenrollFromCourse);
 
 // Instructor routes
-router.get('/courses/:courseId/students', keycloak.protect(), getCourseEnrollments);
+router.get('/courses/:courseId/students', checkJwt, getCourseEnrollments);
 
 export default router;
