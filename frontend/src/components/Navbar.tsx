@@ -68,12 +68,22 @@ const Navbar: React.FC = () => {
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-medium">
-                      {user?.username?.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                  <span className="text-gray-700 font-medium">{user?.username}</span>
+                  {user?.picture ? (
+                    <img
+                      src={user.picture}
+                      alt={user.name || 'User'}
+                      className="w-8 h-8 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-medium">
+                        {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
+                      </span>
+                    </div>
+                  )}
+                  <span className="text-gray-700 font-medium">
+                    {user?.name || user?.email?.split('@')[0] || 'المستخدم'}
+                  </span>
                 </div>
                 <button
                   onClick={logout}

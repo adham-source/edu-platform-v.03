@@ -6,7 +6,7 @@ import {
   updateLesson,
   deleteLesson,
 } from '../controllers/lesson.controller';
-import keycloak from '../../config/keycloak-config';
+import { checkJwt } from "../../config/auth0-config";
 import { isTeacher } from '../middlewares/teacher.middleware';
 import multer from 'multer';
 
@@ -16,7 +16,7 @@ const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // All routes in this file require authentication and teacher/admin role
-router.use(keycloak.protect());
+router.use(checkJwt);
 router.use(isTeacher);
 
 // Define the routes

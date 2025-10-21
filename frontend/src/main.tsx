@@ -7,7 +7,12 @@ import Dashboard from './pages/Dashboard.tsx';
 import Courses from './pages/Courses.tsx';
 import Home from './pages/Home.tsx';
 import Callback from './pages/Callback.tsx';
+import Lessons from './pages/Lessons.tsx';
+import AdminDashboard from './pages/AdminDashboard.tsx';
+import StudentDashboard from './pages/StudentDashboard.tsx';
+import TeacherDashboard from './pages/TeacherDashboard.tsx';
 import { Auth0ProviderWrapper, ProtectedRoute } from './contexts/Auth0Context';
+import { AuthProvider } from './contexts/AuthContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DeviceProvider } from './contexts/DeviceContext';
 
@@ -42,6 +47,38 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: "lessons",
+        element: (
+          <ProtectedRoute>
+            <Lessons />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin",
+        element: (
+          <ProtectedRoute>
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "student",
+        element: (
+          <ProtectedRoute>
+            <StudentDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "teacher",
+        element: (
+          <ProtectedRoute>
+            <TeacherDashboard />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);
@@ -51,7 +88,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <Auth0ProviderWrapper>
         <DeviceProvider>
-          <RouterProvider router={router} />
+          <AuthProvider>
+            <RouterProvider router={router} />
+          </AuthProvider>
         </DeviceProvider>
       </Auth0ProviderWrapper>
     </QueryClientProvider>

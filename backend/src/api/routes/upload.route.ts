@@ -7,20 +7,20 @@ import {
   uploadThumbnailMiddleware,
   uploadVideoMiddleware
 } from '../controllers/upload.controller';
-import keycloak from '../../config/keycloak-config';
+import { checkJwt } from "../../config/auth0-config";
 
 const router = Router();
 
 // Upload course thumbnail
-router.post('/thumbnail', keycloak.protect(), uploadThumbnailMiddleware, uploadThumbnail);
+router.post('/thumbnail', checkJwt, uploadThumbnailMiddleware, uploadThumbnail);
 
 // Upload lesson video
-router.post('/video', keycloak.protect(), uploadVideoMiddleware, uploadVideo);
+router.post('/video', checkJwt, uploadVideoMiddleware, uploadVideo);
 
 // Get file URL (public access for viewing)
 router.get('/file/:filePath(*)', getFileUrl);
 
 // Delete file (protected)
-router.delete('/file/:filePath(*)', keycloak.protect(), deleteFile);
+router.delete('/file/:filePath(*)', checkJwt, deleteFile);
 
 export default router;

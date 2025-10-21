@@ -6,20 +6,19 @@ import {
   updateCourse,
   deleteCourse,
 } from '../controllers/course.controller';
-import keycloak from '../../config/keycloak-config';
+import { checkJwt } from '../../config/auth0-config';
 import { isTeacher } from '../middlewares/teacher.middleware';
 
 const router = Router();
 
 // Routes for course management
-// All these routes require authentication and teacher/admin role
-router.use(keycloak.protect());
-router.use(isTeacher);
-
-router.post('/', createCourse);
+// Public routes (no authentication required)
 router.get('/', getCourses);
 router.get('/:id', getCourseById);
-router.put('/:id', updateCourse);
-router.delete('/:id', deleteCourse);
+
+// Protected routes (require authentication and teacher/admin role)
+router.post('/', checkJwt, isTeacher, createCourse);
+router.put('/:id', checkJwt, isTeacher, updateCourse);
+router.delete('/:id', checkJwt, isTeacher, deleteCourse);
 
 export default router;
