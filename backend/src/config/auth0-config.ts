@@ -22,15 +22,14 @@ export const checkJwt = expressjwt({
   }),
   audience: auth0Config.audience,
   issuer: auth0Config.issuer,
-  algorithms: auth0Config.algorithms
+  algorithms: ['RS256']
 });
 
 // Auth0 Management API client
 export const managementClient = new ManagementClient({
   domain: auth0Config.domain,
   clientId: auth0Config.clientId,
-  clientSecret: auth0Config.clientSecret,
-  scope: 'read:users update:users create:users delete:users'
+  clientSecret: auth0Config.clientSecret
 });
 
 // Helper function to get user from Auth0

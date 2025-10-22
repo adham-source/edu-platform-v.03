@@ -8,8 +8,8 @@ import logger from '../../config/logger';
 // Add or update a rating for a course
 export const rateCourse = async (req: Request, res: Response) => {
   try {
-    const kauth = (req as any).kauth;
-    const userInfo = kauth.grant.access_token.content;
+    const auth = (req as any).auth;
+    const userInfo = auth;
     const { courseId } = req.params;
     const { rating, review } = req.body;
 
@@ -130,8 +130,8 @@ export const getCourseRatings = async (req: Request, res: Response) => {
 // Get user's rating for a specific course
 export const getUserRating = async (req: Request, res: Response) => {
   try {
-    const kauth = (req as any).kauth;
-    const userInfo = kauth.grant.access_token.content;
+    const auth = (req as any).auth;
+    const userInfo = auth;
     const { courseId } = req.params;
 
     const user = await User.findOne({ authProviderId: userInfo.sub });
@@ -166,8 +166,8 @@ export const getUserRating = async (req: Request, res: Response) => {
 // Delete a rating
 export const deleteRating = async (req: Request, res: Response) => {
   try {
-    const kauth = (req as any).kauth;
-    const userInfo = kauth.grant.access_token.content;
+    const auth = (req as any).auth;
+    const userInfo = auth;
     const { courseId } = req.params;
 
     const user = await User.findOne({ authProviderId: userInfo.sub });

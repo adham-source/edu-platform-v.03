@@ -15,8 +15,8 @@ export const createCourse = async (req: Request, res: Response) => {
       category,
       thumbnail 
     } = req.body;
-    const kauth = (req as any).kauth;
-    const instructorId = kauth.grant.access_token.content.sub; // Get user ID from Keycloak token
+    const auth = (req as any).auth;
+    const instructorId = auth.sub; // Get user ID from Auth0 token
 
     const newCourse = new Course({
       title,
@@ -143,8 +143,8 @@ export const updateCourse = async (req: Request, res: Response) => {
       category,
       thumbnail 
     } = req.body;
-    const kauth = (req as any).kauth;
-    const instructorId = kauth.grant.access_token.content.sub; // Get user ID from Keycloak token
+    const auth = (req as any).auth;
+    const instructorId = auth.sub; // Get user ID from Auth0 token
 
     const updateData: any = {
       title,
@@ -185,8 +185,8 @@ export const updateCourse = async (req: Request, res: Response) => {
 // Delete a course
 export const deleteCourse = async (req: Request, res: Response) => {
   try {
-    const kauth = (req as any).kauth;
-    const instructorId = kauth.grant.access_token.content.sub; // Get user ID from Keycloak token
+    const auth = (req as any).auth;
+    const instructorId = auth.sub; // Get user ID from Auth0 token
 
     const course = await Course.findOneAndDelete({ _id: req.params.id, instructor: instructorId });
 

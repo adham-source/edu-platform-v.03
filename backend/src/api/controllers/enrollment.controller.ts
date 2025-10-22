@@ -7,8 +7,8 @@ import logger from '../../config/logger';
 // Enroll in a course
 export const enrollInCourse = async (req: Request, res: Response) => {
   try {
-    const kauth = (req as any).kauth;
-    const userInfo = kauth.grant.access_token.content;
+    const auth = (req as any).auth;
+    const userInfo = auth;
     const { courseId } = req.params;
 
     // Find user in our database
@@ -70,8 +70,8 @@ export const enrollInCourse = async (req: Request, res: Response) => {
 // Get user's enrollments
 export const getUserEnrollments = async (req: Request, res: Response) => {
   try {
-    const kauth = (req as any).kauth;
-    const userInfo = kauth.grant.access_token.content;
+    const auth = (req as any).auth;
+    const userInfo = auth;
 
     const user = await User.findOne({ authProviderId: userInfo.sub });
     if (!user) {
@@ -99,8 +99,8 @@ export const getUserEnrollments = async (req: Request, res: Response) => {
 // Update enrollment progress
 export const updateProgress = async (req: Request, res: Response) => {
   try {
-    const kauth = (req as any).kauth;
-    const userInfo = kauth.grant.access_token.content;
+    const auth = (req as any).auth;
+    const userInfo = auth;
     const { courseId } = req.params;
     const { progress } = req.body;
 
@@ -136,8 +136,8 @@ export const updateProgress = async (req: Request, res: Response) => {
 // Unenroll from course
 export const unenrollFromCourse = async (req: Request, res: Response) => {
   try {
-    const kauth = (req as any).kauth;
-    const userInfo = kauth.grant.access_token.content;
+    const auth = (req as any).auth;
+    const userInfo = auth;
     const { courseId } = req.params;
 
     const user = await User.findOne({ authProviderId: userInfo.sub });
@@ -170,8 +170,8 @@ export const unenrollFromCourse = async (req: Request, res: Response) => {
 // Get course enrollments (for instructors)
 export const getCourseEnrollments = async (req: Request, res: Response) => {
   try {
-    const kauth = (req as any).kauth;
-    const userInfo = kauth.grant.access_token.content;
+    const auth = (req as any).auth;
+    const userInfo = auth;
     const { courseId } = req.params;
 
     // Verify that the user is the instructor of this course

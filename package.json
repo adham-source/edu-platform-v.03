@@ -24,7 +24,7 @@
     "react",
     "nodejs",
     "typescript",
-    "keycloak",
+    "auth0",
     "mongodb",
     "device-security"
   ],
