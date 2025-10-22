@@ -10,8 +10,8 @@ const UPLOAD_BUCKET = 'uploads';
 export const addLessonToCourse = async (req: Request, res: Response) => {
   try {
     const { courseId, title, order, contentType, textContent, isFree } = req.body;
-    const kauth = (req as any).kauth;
-    const instructorId = kauth.grant.access_token.content.sub;
+    const auth = (req as any).auth;
+    const instructorId = auth.sub;
 
     // Ensure the course exists and belongs to the instructor
     const course = await Course.findOne({ _id: courseId, instructor: instructorId });
@@ -96,8 +96,8 @@ export const getLessonById = async (req: Request, res: Response) => {
 export const updateLesson = async (req: Request, res: Response) => {
   try {
     const { title, order, contentType, textContent, isFree } = req.body;
-    const kauth = (req as any).kauth;
-    const instructorId = kauth.grant.access_token.content.sub;
+    const auth = (req as any).auth;
+    const instructorId = auth.sub;
 
     // Ensure the lesson exists and belongs to a course taught by this instructor
     const lesson = await Lesson.findById(req.params.id);
@@ -124,8 +124,8 @@ export const updateLesson = async (req: Request, res: Response) => {
 // Delete a lesson
 export const deleteLesson = async (req: Request, res: Response) => {
   try {
-    const kauth = (req as any).kauth;
-    const instructorId = kauth.grant.access_token.content.sub;
+    const auth = (req as any).auth;
+    const instructorId = auth.sub;
 
     const lesson = await Lesson.findById(req.params.id);
     if (!lesson) {

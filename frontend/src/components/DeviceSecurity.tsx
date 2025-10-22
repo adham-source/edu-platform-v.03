@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { apiClient } from '../api/apiClient';
+import apiClient from '../api/apiClient';
 
 interface Device {
   id: string;
@@ -19,7 +19,7 @@ interface DeviceSecurityProps {
 }
 
 const DeviceSecurity: React.FC<DeviceSecurityProps> = ({ onDeviceRegistered }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, auth0User, isAuthenticated } = useAuth();
   const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,10 +64,10 @@ const DeviceSecurity: React.FC<DeviceSecurityProps> = ({ onDeviceRegistered }) =
         deviceIdentifier,
         deviceInfo,
         auth0UserData: {
-          auth0Id: user.sub,
-          email: user.email,
-          name: user.name,
-          picture: user.picture
+          auth0Id: auth0User?.sub || '',
+          email: auth0User?.email,
+          name: auth0User?.name,
+          picture: auth0User?.picture
         }
       });
 
