@@ -8,7 +8,7 @@
 - **تقييد الوصول للأجهزة**: يمكن للمستخدم الوصول من جهازين فقط
 - **Device Fingerprinting**: تتبع فريد لكل جهاز
 - **حماية الحساب**: حذف تلقائي للحساب عند تجاوز حد الأجهزة
-- **مصادقة Keycloak**: نظام مصادقة آمن ومتقدم
+- **مصادقة Auth0**: نظام مصادقة آمن ومتقدم
 
 ### 🎨 واجهة المستخدم الحديثة
 - **تصميم متجاوب**: يعمل على جميع الأجهزة
@@ -33,7 +33,7 @@
 - **Node.js + Express**: خادم API
 - **TypeScript**: للتطوير الآمن
 - **MongoDB**: قاعدة البيانات
-- **Keycloak**: نظام المصادقة
+- **Auth0**: نظام المصادقة
 - **MinIO**: تخزين الملفات
 
 ### Frontend
@@ -46,7 +46,6 @@
 ### Infrastructure
 - **Docker**: للحاويات
 - **Nginx**: خادم الويب
-- **PostgreSQL**: لقاعدة بيانات Keycloak
 
 ## 🚀 التشغيل السريع
 
@@ -66,18 +65,18 @@ cd edu-platform-v.03
 docker-compose up -d
 ```
 
-### 3. إعداد Keycloak
-1. افتح http://localhost:8080
-2. سجل دخول بـ admin/admin
-3. أنشئ realm جديد باسم "edu-platform"
-4. أنشئ clients للـ frontend والـ backend
-5. أنشئ roles: student, teacher, admin
-6. أنشئ مستخدمين وأعطهم الأدوار المناسبة
+### 3. إعداد Auth0
+1. أنشئ حساب على Auth0.com
+2. أنشئ Application جديد من نوع Single Page Application
+3. أنشئ API جديد للـ Backend
+4. احصل على Domain, Client ID, Client Secret
+5. أضف Callback URLs و Logout URLs
+6. أنشئ Roles: student, teacher, admin
+7. أنشئ مستخدمين وأعطهم الأدوار المناسبة
 
 ### 4. الوصول للتطبيق
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:5000
-- **Keycloak**: http://localhost:8080
 - **MinIO Console**: http://localhost:9001
 
 ## 🛠️ التطوير المحلي
@@ -126,10 +125,12 @@ edu-platform-v.03/
 
 ### متغيرات البيئة - Backend
 ```env
-MONGODB_URI=mongodb://localhost:27017/edu-platform
-KEYCLOAK_URL=http://localhost:8080
-KEYCLOAK_REALM=edu-platform
-KEYCLOAK_CLIENT_ID=edu-platform-backend
+MONGODB_URI=mongodb://admin:password@localhost:27017/edu-platform?authSource=admin
+AUTH0_DOMAIN=your-domain.auth0.com
+AUTH0_CLIENT_ID=your-client-id
+AUTH0_CLIENT_SECRET=your-client-secret
+AUTH0_AUDIENCE=https://your-api.com
+AUTH0_ISSUER=https://your-domain.auth0.com/
 MINIO_ENDPOINT=localhost
 MINIO_PORT=9000
 PORT=5000
@@ -138,9 +139,8 @@ PORT=5000
 ### متغيرات البيئة - Frontend
 ```env
 VITE_BACKEND_URL=http://localhost:5000/api
-VITE_KEYCLOAK_URL=http://localhost:8080
-VITE_KEYCLOAK_REALM=edu-platform
-VITE_KEYCLOAK_CLIENT_ID=edu-platform-frontend
+VITE_AUTH0_DOMAIN=your-domain.auth0.com
+VITE_AUTH0_CLIENT_ID=your-client-id
 ```
 
 ## 🔐 نظام الأمان
@@ -152,7 +152,7 @@ VITE_KEYCLOAK_CLIENT_ID=edu-platform-frontend
 - يمكن للمستخدم إدارة أجهزته المسجلة
 
 ### Authentication Flow
-1. المستخدم يسجل دخول عبر Keycloak
+1. المستخدم يسجل دخول عبر Auth0
 2. يتم إنشاء Device Fingerprint
 3. يتم التحقق من عدد الأجهزة المسجلة
 4. إذا تجاوز الحد، يتم رفض الوصول وحذف الحساب
@@ -202,9 +202,9 @@ VITE_KEYCLOAK_CLIENT_ID=edu-platform-frontend
 
 ### مشاكل شائعة
 
-1. **خطأ في الاتصال بـ Keycloak**
-   - تأكد من تشغيل Keycloak على المنفذ 8080
-   - تحقق من إعدادات الـ realm والـ client
+1. **خطأ في الاتصال بـ Auth0**
+   - تأكد من صحة إعدادات Auth0 في ملف .env
+   - تحقق من Domain, Client ID, Client Secret
 
 2. **خطأ في قاعدة البيانات**
    - تأكد من تشغيل MongoDB
